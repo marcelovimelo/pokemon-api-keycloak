@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:21.1.1
+    environment:
+      - KEYCLOAK_ADMIN=admin
+      - KEYCLOAK_ADMIN_PASSWORD=admin
+      - KC_DB=dev-mem
+    ports:
+      - "8082:8080"
+    command: ["start-dev"]  # Inicia o Keycloak no modo de desenvolvimento
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+
+  pokemon-api:
+    build: .
+    ports:
+      - "8080:5000"
+    environment:
+      - KEYCLOAK_URL=http://keycloak:8080
+    depends_on:
+      - keycloak
+
+volumes:
+  keycloak_data:
